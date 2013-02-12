@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import datetime
-from django_countries import CountryField
+#from django_countries import CountryField
 from django.utils.translation import ugettext_lazy as _
 
 # Create your models here.
@@ -42,7 +42,7 @@ class Product(models.Model):
     '''
     Class to represent a product
     '''
-    code = models.CharField(_('Code'), max_length=255)
+    code = models.CharField(verbose_name=_('Code'), max_length=255)
     item = models.CharField(_('Item'), max_length=255)
     category = models.ForeignKey(Category, verbose_name=_('Cateogory'))
     price_unit = models.FloatField(_('Price Unit'))
@@ -53,6 +53,10 @@ class Product(models.Model):
     
     def __unicode__(self):
         return "%s" % self.code
+
+    class Meta:
+        verbose_name = _('Products')
+        verbose_name_plural = _('Products')
     
 class CustomAttribute(models.Model):
     '''
@@ -75,7 +79,7 @@ class Client(models.Model):
     city = models.CharField(_('City'), max_length=150)
     zip_code = models.IntegerField(_('Zip Code'))
     state = models.CharField(_('State'), max_length=255)
-    country = CountryField()
+    #country = CountryField()
     phone = models.CharField(_('Phone'), max_length=20)
     cellphone = models.CharField(_('Cellphone'), max_length=20)
     fax = models.CharField(max_length=20)
@@ -90,4 +94,42 @@ class Client(models.Model):
     
     def __unicode__(self):
         return "%s" % self.name
-    
+
+class Biller(models.Model):
+    '''
+    Class for biller
+    '''
+    name = models.CharField(verbose_name=_("Biller Name"), max_length=255)
+    email = models.EmailField()
+    observations = models.TextField(_('Observations'))
+    active = models.BooleanField(_('Active'), default=True)
+
+    class Meta:
+        verbose_name = _('Biller')
+        verbose_name_plural = _('Billers')
+
+    def __unicode__(self):
+        return "%s" % self.name
+
+class Money(models.Model):
+    '''
+    Class for money
+    '''
+    biller = models.ForeignKey(Biller, verbose_name = 'Biller')
+    client = models.ForeignKey(Client, verbose_name ='Client')
+    quantity = models.IntegerField(_('Quantity items'))
+    price =  models.FloatField(_('Price products'))
+    tax =  models.FloatField(_('Tax products'))
+
+    def __unicode__(self):
+        return "%s" % self.biller
+
+class QuantityInvoice(models.Model):
+    '''
+    Class for count Quantity of Items, Tax and Unit Price by Client
+    '''
+    pass
+    #quantity = models.IntegerField(_('Quantity'))
+    #product = models.ForeignKey(Product, verbose_name=_('Code Product'))
+    #price =  models.FloatField(_('Price'))
+    #tax =  models.FloatField(_('Tax'))
